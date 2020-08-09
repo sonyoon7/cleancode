@@ -1,0 +1,17 @@
+{
+  "name": "final",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "dependencies": {
+    "chai": "^4.2.0"
+  },
+  "devDependencies": {
+    "mocha": "^8.1.1"
+  },
+  "scripts": {
+    "test": "mocha  ./test/dicetest.js"
+  },
+  "author": "",
+  "license": "ISC"
+}
