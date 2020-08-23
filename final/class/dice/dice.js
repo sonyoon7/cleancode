@@ -13,5 +13,6 @@ module.exports = class Dice {
         return Math.floor(Math.random() * this.face + 1);
     }
 
+
 }
 

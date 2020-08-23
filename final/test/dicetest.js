@@ -25,4 +25,3 @@ describe('dice CLASS 테스트', function () {
         done();
     });
 })
-

@@ -10,7 +10,7 @@
     "mocha": "^8.1.1"
   },
   "scripts": {
-    "test": "mocha  ./test/dicetest.js"
+    "test": "mocha  --file ./test/player.js"
   },
   "author": "",
   "license": "ISC"
