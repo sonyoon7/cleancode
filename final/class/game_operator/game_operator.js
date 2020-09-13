@@ -1,11 +1,11 @@
-const Game = require('../game/game_operator')
-const Player = require('../player/player')
-const Dice = require('../dice/dice')
+const Play = require("../play/play");
+const Player = require("../player/player");
+const Dice = require("../dice/dice");
 module.exports = class GameOperator {
     constructor() {
-        this.game = null;
-        this.palyerFirst = null;
-        this.palyerSecond = null;
+        this.play = null;
+        this.playerFirst = null;
+        this.playerSecond = null;
         this.diceFirst = null;
         this.diceSecond = null;
     }
@@ -15,26 +15,28 @@ module.exports = class GameOperator {
     }
 
     prepare(aimedScore, trapDicePoint) {
-        this.palyerFirst = new Player();
-        this.palyerSecond = new Player();
+        this.playerFirst = new Player();
+        this.playerSecond = new Player();
         this.diceFirst = new Dice();
         this.diceSecond = new Dice();
+        this.play = new Play();
 
-        this.game = new Game(aimedScore, trapDicePoint, palyerFirst, palyerSecond, dices);
+        // this.play = new Play(
+        //     aimedScore,
+        //     trapDicePoint,
+        //     playerFirst,
+        //     playerSecond,
+        //     dices
+        // );
     }
 
     rollDice() {
-
         try {
-            this.game.rollDice();
-        } catch (error) {
-
-        }
-
+            this.play.rollDice();
+        } catch (error) { }
     }
 
     turnOver() {
-        this.game.turnOver();
+        this.play.turnOver();
     }
-
-}
+};
