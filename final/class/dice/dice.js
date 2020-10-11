@@ -9,7 +9,7 @@ module.exports = class Dice {
     }
 
     // 주사위굴리기
-    roll() {
+    roll() { 
         return Math.floor(Math.random() * this.face + 1);
     }
 

@@ -9,19 +9,57 @@ const { get } = require("http");
 
 const expect = chai.expect;
 
+// 콜백 done을 매개변수로 줄 때 비동기처리, done()함수 호출로 해당 작업이 끝났다는 것을 알림. promise와 비슷함
 describe("Game operator constructor test", function () {
     const gameOperator = new GameOperator();
 
-    it("Game must be null", (done) =>
-        expect(gameOperator.game === null).to.be.true);
-    it("Player 1 must be null", (done) =>
-        expect(gameOperator.playerFirst === null).to.be.true);
-    it("Player 2 must be null", (done) =>
-        expect(gameOperator.playerSecond === null).to.be.true);
-    it("First dice must be null", (done) =>
-        expect(gameOperator.diceFirst === null).to.be.true);
-    it("Second dice must be null", (done) =>
-        expect(gameOperator.diceSecond === null).to.be.true);
+    it("Game must be null", (done) => { 
+        expect(gameOperator.play === null).to.be.true;
+        done(); 
+    })
+
+    it("Player 1 must be null", (done) => { 
+        expect(gameOperator.playerFirst === null).to.be.true;
+        done(); 
+    })
+    it("Player 2 must be null", (done) => { 
+        expect(gameOperator.playerSecond === null).to.be.true;
+        done(); 
+    })
+    it("First dice must be null", (done) => { 
+        expect(gameOperator.diceFirst === null).to.be.true;
+        done(); 
+    })
+    it("Second dice must be null", (done) => { 
+        expect(gameOperator.diceSecond === null).to.be.true;
+        done(); 
+    })
+});
+
+describe("Game operator prepare test", function () {
+    const gameOperator = new GameOperator();
+    gameOperator.prepare(100, 1);
+    it("Game initial Type Check", (done) =>{
+        expect( gameOperator.play instanceof Play).to.be.true;
+        done();
+    })
+    it("Player 1 initial Type Check", (done) =>{
+        expect(gameOperator.playerFirst instanceof Player).to.be.true;
+        done();
+    })
+    it("Player 2 initial Type Check", (done) => {
+        expect(gameOperator.playerSecond instanceof Player).to.be.true;
+        done();
+    })
+    it("First dice initial Type Check", (done) => {
+        expect(gameOperator.diceFirst instanceof Dice).to.be.true;
+        done();
+    })
+    it("Second dice initial Type Check", (done) => {
+        expect( gameOperator.diceSecond instanceof Dice).to.be.true;
+        done();
+    })
+    
 });
 
 describe("Player initiating", function () {
@@ -38,11 +76,13 @@ describe("Player initiating", function () {
     // 2. 목표점수 세팅
     play.setAimedScore(100);
 
-    it("Check aim score has been set correctly", (done) =>
-        expect(play.aimedScore === 100).to.be.true);
+    it("Check aim score has been set correctly", () =>{
+        expect(play.aimedScore === 100).to.be.true;
+    })
 
-    it("Play must have two players", (done) =>
-        expect(play.playerList.length === 2).to.be.true);
+    it("Play must have two players", () => {
+        expect(play.playerList.length === 2).to.be.true;
+    })
 });
 
 /**
@@ -59,53 +99,58 @@ describe("play", function () {
     // 2. 주사위 세팅
     const dice1 = new Dice(6);
     const dice2 = new Dice(6);
-
     play.initDices(dice1, dice2);
-
     const currentPlayer = play.getCurrentPlayer();
 
     // 3. 주사위 굴림
     const resultOfRolling = play.rollDice();
 
     if (play.isTrapPoint(resultOfRolling)) {
-        currentPlayer.holdingScore() = 0;
+        currentPlayer.holdingScore = 0;
     } else {
-        player1.accumulateholdingScore();
+        player1.accumulateholdingScore(0);
     }
-
     // it(`[currentPlayerIndex] ${play.turnIndex}`);
-    it(`[currentPlayerIndex] ${play.turnIndex}`, (done) => {
+    it(`[currentPlayerIndex] check index 0`, () => {
         expect(play.turnIndex === 0).to.be.true;
     });
-    play.turnOver();
-    it(`[nextPlayerIndex] ${play.turnIndex}`, (done) => {
+  
+
+    it(`[nextPlayerIndex] check index 1`, () => {
+        play.turnOver();
         expect(play.turnIndex === 1).to.be.true;
     });
 
+    
+
+
     describe("play-case1", function () {
         const play = new Play();
-
-        const currentPlayer = play.getCurrentPlayer();
-
         const player1 = new Player();
         const player2 = new Player();
 
         const dice1 = new Dice(6);
         const dice2 = new Dice(6);
+        
+        play.initDices(dice1,dice2)
 
         play.setPlayerList(player1, player2);
 
         const testPoints = [4, 5];
 
-        // play.punishOrAccumulate(testPoints);
+        play.punishOrAccumulate(testPoints); // play의 트랩포인트 검사 및 합산점수 업데이트
 
-        let currentPlayer1 = play.getCurrentPlayer();
-        let currentScore = currentPlayer1.currentScore;
+        let currentPlayer = play.getCurrentPlayer();
+        let holdingScore = currentPlayer.holdingScore;
+        console.log(`currentScore check ${holdingScore}`);
 
         it(
-            "[Current Score Test] Dice Point is " + testPoints,
-            (done) => expect(currentScore === 9).to.be.true
+            "[holdingScore Score Test] Dice Point is ",
+            () => {
+                expect(holdingScore === 9).to.be.true;
+            }
         );
+
     });
 
     describe("Check punishment works correctly", function () {
@@ -114,26 +159,80 @@ describe("play", function () {
         const dice1 = new Dice(1);
         const dice2 = new Dice(6);
 
+        const player1 = new Player();
+        const player2 = new Player();
+
+        play.setPlayerList(player1, player2);
+
         play.initDices(dice1, dice2);
 
         it("Check play has two dices", (done) => {
             expect(play.diceList.length === 2).to.be.true;
+            done();
         });
         //1. 턴 관리 (?)
         //2. 점수 관리
 
-        //3. 다이스 굴렸을 때 1 체크
-        it("Check one of dice value is 1", (done) => {
-            expect(play.rollDice().includes(1)).to.be.true;
+        //3. 점수 (points)에 1이 포함되어 있는지 확인.
+        it("Check one of dices value is 1", (done) => {
+            play.rollDice();
+            console.log("play.points", play.points);
+            expect(play.points.includes(1)).to.be.true;
+            done();
         });
 
         // 주사위 값이 1이면 현재 플레이어 점수가 초기화 되는지 확인
-        if (play.rollDice().includes(1)) {
-            it("Check Player point 0 if one of dices has 1 value", (done) => {
-                play.punishTrappedPlayer();
-                expect(play.playerList[play.currentPlayer].currentScore === 0).to.be
-                    .true;
-            });
-        }
+        it("Check Player point 0 if one of dices has 1 value", (done) => {
+            const currentPlayerIndex = play.currentPlayer
+            play.punishTrappedPlayer();
+            expect(play.playerList[currentPlayerIndex].currentScore === 0).to.be.true;
+            done();
+        });
+        
+
     });
+});
+
+
+describe('hooks', function() {
+    const play = new Play();
+
+    // 1. 플레이어 세팅
+    const player1 = new Player();
+    const player2 = new Player();
+
+    // 2. 주사위 세팅
+    const dice1 = new Dice(6);
+    const dice2 = new Dice(6);
+
+    before('before 초기화 세팅',function() {
+        play.setPlayerList(player1, player2);
+        play.initDices(dice1, dice2);
+        const currentPlayer = play.getCurrentPlayer();
+
+         // 3. 주사위 굴림
+         const resultOfRolling = play.rollDice();
+
+         if (play.isTrapPoint(resultOfRolling)) {
+             currentPlayer.holdingScore = 0;
+         } else {
+             player1.accumulateholdingScore(0);
+         }
+    });
+
+   describe('sssssssss', () =>{
+
+    
+       it(`[currentPlayerIndex] check index 0`, () => {
+        expect(play.turnIndex === 0).to.be.true;
+        });
+
+
+        it(`[nextPlayerIndex] check index 1`, () => {
+            play.turnOver();
+            expect(play.turnIndex === 1).to.be.true;
+        });
+   })
+
+// test cases                                                                                                                                                                                                                                                                                                                                  
 });

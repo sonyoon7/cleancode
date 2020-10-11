@@ -57,6 +57,7 @@ module.exports = class Play {
 
     //주사위 굴린다
     rollDice() {
+        this.points = [];
         for (let dice of this.diceList) {
             this.points.push(dice.roll());
         }
@@ -64,28 +65,32 @@ module.exports = class Play {
     }
 
     //주사위를 굴려서 나온 점수를 보고 어케할까
-    //   punishOrAccumulate(points) {
-    //     this.points = points;
-    //     if (this.isTrapPoint(this.points)) {
-    //       this.punishTrappedPlayer();
-    //     } else {
-    //       this.playerList[this.currentPlayer].accumulateholdingScore();
-    //     }
-    //   }
+    punishOrAccumulate(points) {
+        this.points = points;
+        if (this.isTrapPoint(this.points)) {
+            this.punishTrappedPlayer();
+        } else {
+            const reducer = (accumulator, currentValue) => accumulator + currentValue;
+            let sumScore = points.reduce(reducer);
+            console.log(`punishOrAccumulate check ${sumScore}`) // 여기선 9가 제대로 체크됨
+            this.playerList[this.currentPlayer].accumulateholdingScore(sumScore);
+            console.log(`세팅된 점수 업데이트 확인 ${this.playerList[this.currentPlayer].currentScore}`);
+        }
+    }
 
     //trapPoint인지 체크한다.
     isTrapPoint(points) {
-        // includes 문자열로 알고있는데
+        // includes 문자열로 알고있는데 => 테스트해봤는데 배열에서는 인자값으로 찾음
         return this.points.includes(this.trapDicePoint);
-        // indexOf의 리턴값이 -1이면 해당 index에 없음
-        // return points.indexOf(this.trapDicePoint) > -1 ? true : false;
     }
 
     punishTrappedPlayer() {
         //1. 현재 플레이어의 주사위 중 하나의 값이 1인 경우, currentPlayer의 점수를 0으로 만든다
-        this.currentPlayer.holdingScore = 0;
+        console.log(this.currentPlayer);
+        console.log(this.playerList[this.currentPlayer]);
+        this.playerList[this.currentPlayer].holdingScore = 0;
         //2. 턴을 넘긴다
-        turnOver();
+        this.turnOver();
     }
 
     //턴 넘긴다
@@ -95,6 +100,7 @@ module.exports = class Play {
         } else {
             this.turnIndex++;
         }
+        this.currentPlayer = this.turnIndex;
     }
 
     holdScore() {
